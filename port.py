@@ -16,22 +16,17 @@ args = parser.parse_args()
 
 
 class GudeDevice:
-    def getPortJson(self, host, ssl, port=None, switch=None, username=None, password=None):
+    def getJson(self, host, ssl, filename, params, username=None, password=None):
         if ssl:
             url = 'https://'
         else:
             url = 'http://'
 
-        url += host + '/' + 'statusjsn.js'
+        url += host + '/' + filename
 
         auth = None
         if username:
             auth = requests.auth.HTTPBasicAuth(username, password)
-
-        if (port is not None and switch is not None):
-            params = {'components':1, 'cmd':1, 'p':port, 's':switch}
-        else:
-            params = {'components': 1}
 
         r = requests.get(url, params=params, verify=False, auth=auth)
 
@@ -39,6 +34,13 @@ class GudeDevice:
             return json.loads(r.text)
         else:
             raise ValueError("http request error {0}".format(r.status))
+
+    def getPortJson(self, host, ssl, port=None, switch=None, username=None, password=None):
+        if (port is not None and switch is not None):
+            params = {'components': 1, 'cmd':1, 'p':port, 's':switch}
+        else:
+            params = {'components': 1}
+        return self.getJson(host, ssl, 'statusjsn.js', params, username, password)
 
     def getPortState(self, port):
         port = int(port)-1
