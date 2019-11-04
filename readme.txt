@@ -1,5 +1,6 @@
 - Print state of powerport(s)
 - Change (Switch) state of powerport
+- show OVP state
 
 Example, where device 192.168.0.2 has 4 ports:
 
@@ -20,3 +21,9 @@ Example, where device 192.168.0.2 has 4 ports:
   1
   0
   0
+
+
+  # show OVP sate
+  ./port.py -H 192.168.0.2 --ovp 1
+  1
+
