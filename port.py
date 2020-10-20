@@ -7,7 +7,7 @@ import json
 parser = argparse.ArgumentParser(prog='port.py')
 parser.add_argument('-H', '--host', help='ip address of target host')
 parser.add_argument('-p', '--port', help='port number (1..x)')
-parser.add_argument('-s', '--switch', help='state 0=Off, 1=On, 3=Reset')
+parser.add_argument('-s', '--switch', help='state 0=Off, 1=On, 2=Toggle, 3=Reset')
 parser.add_argument('-o', '--ovp', help='OVP numer, show OVP state (1..x)')
 parser.add_argument('--ssl', help='use https connection', action="store_true")
 parser.add_argument('--username', help='username for HTTP basic auth credentials')
@@ -40,7 +40,7 @@ class GudeDevice:
     def getPortJson(self, host, ssl, port=None, switch=None, username=None, password=None):
         components = 1 + 512
         if (port is not None and switch is not None):
-            if int(switch) in [0,1]:
+            if int(switch) != 3:
                 params = {'components': components, 'cmd':1, 'p':port, 's':switch}
             else:
                 params = {'components': components, 'cmd':12, 'p':port}
