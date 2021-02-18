@@ -1,5 +1,5 @@
-- Print state of powerport(s)
-- Change (Switch) state of powerport
+- Query / Switch state of powerport(s) by HTTP
+  - HTTP Authentification and SSL encryption supported by optional command line parameters
 - show OVP state
 
 Example, where device 192.168.0.2 has 4 ports:
