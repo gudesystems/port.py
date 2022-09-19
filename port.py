@@ -5,9 +5,11 @@ import requests
 import json
 
 parser = argparse.ArgumentParser(prog='port.py')
-parser.add_argument('-H', '--host', help='ip address of target host')
+parser.add_argument('-H', '--host', help='<Required> ip address of target host')
 parser.add_argument('-p', '--port', help='port number (1..x)')
 parser.add_argument('-s', '--switch', help='state 0=Off, 1=On, 2=Toggle, 3=Reset')
+parser.add_argument('-b', '--batch_delay', help='seconds between states')
+parser.add_argument('-a', '--batch_states', nargs='+', help='multiple batch states (0=Off, 1=On, 2=Toggle), e.g.: 1 0')
 parser.add_argument('-o', '--ovp', help='OVP numer, show OVP state (1..x)')
 parser.add_argument('--ssl', help='use https connection', action="store_true")
 parser.add_argument('--username', help='username for HTTP basic auth credentials')
@@ -37,13 +39,18 @@ class GudeDevice:
         else:
             raise ValueError("http request error {0}".format(r.status))
 
-    def getPortJson(self, host, ssl, port=None, switch=None, username=None, password=None):
+    def getPortJson(self, host, ssl, port=None, switch=None, batch=None, states=None, username=None, password=None):
         components = 1 + 512
-        if (port is not None and switch is not None):
-            if int(switch) != 3:
-                params = {'components': components, 'cmd':1, 'p':port, 's':switch}
+        if port and (switch or batch and states):
+            if batch and states:
+                params = {'components': components, 'cmd': 5, 'p': port, 's': batch}
+                for idx, state in enumerate(states):
+                    params['a'+str(idx+1)] = state
+            elif int(switch) != 3:
+                params = {'components': components, 'cmd': 1, 'p': port, 's': switch}
             else:
-                params = {'components': components, 'cmd':12, 'p':port}
+                # s=3 does not exist, instead cmd=12 is used
+                params = {'components': components, 'cmd': 12, 'p': port}
         else:
             params = {'components': components}
         return self.getJson(host, ssl, 'statusjsn.js', params, username, password)
@@ -60,8 +67,8 @@ class GudeDevice:
         else:
             return None
 
-    def __init__(self, host, ssl, port=None, switch=None, username=None, password=None):
-        self.portJson = self.getPortJson(host, ssl, port, switch, username, password)
+    def __init__(self, host, ssl, port=None, switch=None, batch=None, states=None, username=None, password=None):
+        self.portJson = self.getPortJson(host, ssl, port, switch, batch, states, username, password)
         self.numPorts = len(self.portJson["outputs"])
         self.numBanks = len(self.portJson["hardware"]["banks"])
 
@@ -69,6 +76,7 @@ class GudeDevice:
 gudeDevice = GudeDevice(
     str(args.host), args.ssl,
     args.port, args.switch,
+    args.batch_delay, args.batch_states,
     args.username, args.password
 )
 
