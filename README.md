@@ -33,3 +33,8 @@ To switch port 1 on, off, on and off in a 2 seconds delay:
 ## show OVP sate
     ./port.py -H 192.168.0.2 --ovp 1
     1
+
+# Info
+Following devices are not supported:
+*_Expert Power Control 8080_
+*_EMC Professional_
