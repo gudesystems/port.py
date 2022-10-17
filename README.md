@@ -35,6 +35,6 @@ To switch port 1 on, off, on and off in a 2 seconds delay:
     1
 
 # Info
-Following devices are not supported:
-*_Expert Power Control 8080_
-*_EMC Professional_
+Following devices are not supported (see [issue 1](https://github.com/gudesystems/port.py/issues/1) for alternative):
+ - _Expert Power Control 8080_
+ - _EMC Professional_
