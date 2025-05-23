@@ -46,7 +46,6 @@ class GudeDevice:
     def getPortJson(host, ssl=False, port=None, switch=None, batch=None, states=None, username=None, password=None):
         components = 1 + 512
         if port and (switch or batch and states):
-            print(switch)
             if batch and states:
                 params = {'components': components, 'cmd': 5, 'p': port, 's': batch}
                 for idx, state in enumerate(states):
